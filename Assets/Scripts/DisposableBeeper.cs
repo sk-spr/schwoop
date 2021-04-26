@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class disposableBeeper : MonoBehaviour
+public class DisposableBeeper : MonoBehaviour
 { 
     private AudioSource source;
     public float duration;

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 [RequireComponent(typeof(SpriteRenderer))]
-public class simpleButton : MonoBehaviour
+public class SimpleButton : MonoBehaviour
 {
     public Sprite PressedSprite;
     public int targetScene;
@@ -13,8 +13,8 @@ public class simpleButton : MonoBehaviour
     private SpriteRenderer r;
     private Sprite idleSprite;
     public bool currentlyPressed = false;
-    public List<simpleButton> otherButtons;
-    public List<quitButton> quitButtons;
+    public List<SimpleButton> otherButtons;
+    public List<QuitButton> quitButtons;
     public GameObject bleeper;
     private void Awake()
     {
@@ -27,15 +27,13 @@ public class simpleButton : MonoBehaviour
         cam = Camera.main;
         r = this.GetComponent<SpriteRenderer>();
         idleSprite = r.sprite;
-        otherButtons = GameObject.FindObjectsOfType<simpleButton>().ToList();
-        quitButtons = GameObject.FindObjectsOfType<quitButton>().ToList();
+        otherButtons = GameObject.FindObjectsOfType<SimpleButton>().ToList();
+        quitButtons = GameObject.FindObjectsOfType<QuitButton>().ToList();
     }
 
     void Update()
     {
         var pos = cam.ScreenToWorldPoint(new Vector3(Mouse.current.position.ReadValue().x, Mouse.current.position.ReadValue().y, 10));
-        var p = this.transform.position;
-
         if (pos.x > r.bounds.min.x && pos.y > r.bounds.min.y && pos.x < r.bounds.max.x && pos.y < r.bounds.max.y && Mouse.current.leftButton.isPressed && !currentlyPressed)
         {
             var avail = true;
@@ -48,23 +46,23 @@ public class simpleButton : MonoBehaviour
             foreach (var btn in quitButtons)
                 if (btn.currentlyPressed)
                     avail = false;
-            if (avail)down();
+            if (avail)Down();
         }
         if (!Mouse.current.leftButton.isPressed && currentlyPressed)
         {
             currentlyPressed = false;
-            up();
+            Up();
         }
 
     }
-    public void down()
+    public void Down()
     {
         currentlyPressed = true;
         r.sprite = PressedSprite;
         Debug.Log("hello");
         Instantiate(bleeper);
     }
-    public void up()
+    public void Up()
     {
         r.sprite = idleSprite;
         UnityEngine.SceneManagement.SceneManager.LoadScene(targetScene, LoadSceneMode.Single);

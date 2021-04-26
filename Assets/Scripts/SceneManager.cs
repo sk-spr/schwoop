@@ -31,11 +31,10 @@ public class SceneManager : MonoBehaviour
     public float score;
     public float multiplier;
 
-    private scoreKeeper keeper;
-    // Start is called before the first frame update
+    public scoreKeeper keeper;
     void Start()
     {
-        addLayer(5);
+        AddLayer(5);
         Debug.Log("start");
         currentSpeed = initialFallSpeed;
         timePassed = 0;
@@ -43,24 +42,27 @@ public class SceneManager : MonoBehaviour
         multiplier = 1;
 
         keeper = FindObjectOfType<scoreKeeper>();
+        if (keeper == null)
+        {
+            var temp = Instantiate(new GameObject());
+            keeper = temp.AddComponent<scoreKeeper>();
+        }
         keeper.score = 0;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        currentSpeed = initialFallSpeed * multiplier;
+        currentSpeed = initialFallSpeed * ((multiplier-1)*0.6f + 1);
         if (walls[0].transform.position.y > 5)
         {
             float currentLowest = walls[walls.Count - 1].transform.position.y;
-            float oldLowest = currentLowest;
-            while(currentLowest > -5)
+            while (currentLowest > -5)
             {
                 //trashy hack but i needed to make sure it checks every time
                 currentLowest--;
-                addLayer(currentLowest);
+                AddLayer(currentLowest);
             }
-            dropLayer();
+            DropLayer();
         }
         if(timePassed > 1)
         {
@@ -70,16 +72,27 @@ public class SceneManager : MonoBehaviour
                     canSpawn = false;
             if(canSpawn)
             {
-                spawnObstacle(obstaclePrefabs[Random.Range(0, obstaclePrefabs.Count - 1)]);
-                nextOffset = Random.Range(2, 4 - difficulty);
+                if(obstacles.Count < 1)
+                {
+                    SpawnObstacle(obstaclePrefabs[obstaclePrefabs.Count - 1]);
+                    nextOffset = 10;
+                } else
+                {
+                    if (Random.Range(0f, 1f) < 0.01)
+                        SpawnObstacle(obstaclePrefabs[obstaclePrefabs.Count - 1]);
+                    else
+                        SpawnObstacle(obstaclePrefabs[Random.Range(0, obstaclePrefabs.Count-1)]);
+                    nextOffset = Random.Range(3+multiplier, 2+2*multiplier);
+                }
+                
             }
         }
         foreach (var obstacle in obstacles)
             if (obstacle.transform.position.y > 20)
-                cullObstacle(obstacle);
+                CullObstacle(obstacle);
         foreach (var o in otherObjects)
             if (o.transform.position.y > 20)
-                cullOther(o);
+                CullOther(o);
 
 
     }
@@ -110,7 +123,7 @@ public class SceneManager : MonoBehaviour
         scoreText.text = $"score: {(int)keeper.score}";
         multText.text = $"mult: x{multiplier.ToString().CapLen(3)}";
     }
-    private void addLayer(float y)
+    private void AddLayer(float y)
     {
         //this code relies on the walls only being added and removed in twos
         //dirty disgusting hack but i am on a deadline
@@ -119,10 +132,10 @@ public class SceneManager : MonoBehaviour
             Debug.LogError("WallTiles list too short");
             return;
         }
-        walls.Add(Instantiate(WallTilesL[0], new Vector3(-2.7f, y, 0), Quaternion.identity));
-        walls.Add(Instantiate(WallTilesR[0], new Vector3(2.7f, y, 0), Quaternion.identity));
+        walls.Add(Instantiate(WallTilesL[0], new Vector3(-3f, y, 0), Quaternion.identity));
+        walls.Add(Instantiate(WallTilesR[0], new Vector3(3f, y, 0), Quaternion.identity));
     }
-    private void dropLayer()
+    private void DropLayer()
     {
         try
         {
@@ -139,7 +152,7 @@ public class SceneManager : MonoBehaviour
             Debug.LogError(e.Message);
         }
     }
-    private void spawnObstacle(GameObject obstacle)
+    private void SpawnObstacle(GameObject obstacle)
     {
         var instance = Instantiate(obstacle);
         var pos = instance.transform.position;
@@ -147,7 +160,7 @@ public class SceneManager : MonoBehaviour
         instance.transform.position = pos;
         obstacles.Add(instance);
     }
-    private void cullObstacle(GameObject item)
+    private void CullObstacle(GameObject item)
     {
         try
         {
@@ -159,7 +172,7 @@ public class SceneManager : MonoBehaviour
             Debug.LogError(e.Message);
         }
     }
-    private void cullOther(GameObject o)
+    private void CullOther(GameObject o)
     {
         try
         {
@@ -172,7 +185,7 @@ public class SceneManager : MonoBehaviour
         }
     }
 
-    public void reset()
+    public void Reset()
     {
         depth = 0;
         difficulty = initialDifficulty;
@@ -188,7 +201,7 @@ public class SceneManager : MonoBehaviour
         keeper.score = 0;
     }
 }
-public static class stringExtensions
+public static class StringExtensions
 {
     public static string CapLen(this string s, int l) => (s.Length < l) ? s : s.Substring(0, l);
 

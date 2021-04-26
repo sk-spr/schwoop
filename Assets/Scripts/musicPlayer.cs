@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class musicPlayer : MonoBehaviour
+public class MusicPlayer : MonoBehaviour
 {
     private AudioSource source;
     private List<GameObject> other;
-    private bool notFirst = false;
 
     private void Awake()
     {

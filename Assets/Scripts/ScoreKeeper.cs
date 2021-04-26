@@ -8,6 +8,8 @@ public class scoreKeeper : MonoBehaviour
     private void Awake()
     {
         score = 0;
+        if (FindObjectsOfType<scoreKeeper>().Length >1)
+            Destroy(this.gameObject);
         DontDestroyOnLoad(this.gameObject);
     }
 }

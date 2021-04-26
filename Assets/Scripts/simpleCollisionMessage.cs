@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class simpleCollisionMessage : MonoBehaviour
+public class SimpleCollisionMessage : MonoBehaviour
 {
-    public playerBehavior player;
+    public PlayerBehavior player;
     // Start is called before the first frame update
     void Start()
     {
-        player = this.GetComponentInParent<playerBehavior>();
+        player = this.GetComponentInParent<PlayerBehavior>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        player.handleCollisions(collision);
+        player.HandleCollisions(collision);
     }
 }

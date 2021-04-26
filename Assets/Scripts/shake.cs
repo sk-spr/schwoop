@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class shake : MonoBehaviour
+public class Shake : MonoBehaviour
 {
     public float shakeDuration;
     public float shakeIntensity;
